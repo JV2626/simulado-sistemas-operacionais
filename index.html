@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Simulado Interativo: Sistemas Operacionais | IFSP</title>
+  <meta name="description" content="Super Simulado e Quiz Interativo de Sistemas Operacionais (ITPSTOP) - Processos, Threads, Virtualização, Tipos de SO e Escalonamento - IFSP">
+  <meta name="theme-color" content="#2563eb">
+  
+  <!-- Tailwind CSS & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            so: {
+              50: "#eff6ff",
+              100: "#dbeafe",
+              500: "#3b82f6",
+              600: "#2563eb",
+              700: "#1d4ed8",
+              800: "#1e40af",
+              900: "#1e3a8a",
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+    
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+    }
+
+    code, pre {
+      font-family: "Fira Code", monospace;
+    }
+
+    .dropzone {
+      min-height: 38px;
+      min-width: 44px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .dropzone.filled {
+      border-style: solid !important;
+      border-color: #2563eb !important;
+      background-color: #dbeafe !important;
+      color: #1e40af !important;
+      font-weight: 700;
+    }
+
+    .dark .dropzone.filled {
+      background-color: #1e3a8a !important;
+      border-color: #60a5fa !important;
+      color: #dbeafe !important;
+    }
+
+    .draggable-token {
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+
+    .draggable-token:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+
+    .draggable-token.selected-for-drop {
+      border-color: #2563eb !important;
+      background-color: #dbeafe !important;
+      color: #1e40af !important;
+      transform: scale(1.05);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.35);
+    }
+
+    .dark .draggable-token.selected-for-drop {
+      background-color: #1e3a8a !important;
+      border-color: #60a5fa !important;
+      color: #dbeafe !important;
+    }
+
+    .connecting-card.selected {
+      border-color: #2563eb !important;
+      background-color: #dbeafe !important;
+      transform: scale(1.02);
+    }
+    .dark .connecting-card.selected {
+      background-color: #1e3a8a !important;
+      border-color: #60a5fa !important;
+    }
+
+    .matched {
+      border-color: #10b981 !important;
+      background-color: #d1fae5 !important;
+      color: #065f46 !important;
+      pointer-events: none;
+    }
+    .dark .matched {
+      background-color: #064e3b !important;
+      color: #a7f3d0 !important;
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200 antialiased pb-20">
+
+  <!-- TOP HEADER / NAV -->
+  <header class="sticky top-0 z-50 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm">
+    <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+      
+      <!-- Brand & Title -->
+      <div class="flex items-center space-x-2.5 sm:space-x-3">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-base sm:text-lg shadow-md shrink-0">
+          <i class="fa-solid fa-microchip"></i>
+        </div>
+        <div>
+          <h1 class="text-xs sm:text-base font-extrabold leading-tight text-slate-900 dark:text-white">Simulado de Sistemas Operacionais</h1>
+          <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-medium">ITPSTOP • Prof. Dr. Ramiro Wisnieski | IFSP</p>
+        </div>
+      </div>
+
+      <!-- Controls & Score -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <!-- Live Score -->
+        <div class="flex items-center bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 px-2.5 py-1 rounded-lg text-xs sm:text-sm font-bold border border-blue-200 dark:border-blue-800/80">
+          <i class="fa-solid fa-trophy mr-1.5 text-amber-500 text-xs"></i>
+          <span><span id="scoreDisplay">0</span>/<span id="totalQuestionsDisplay">20</span></span>
+        </div>
+
+        <!-- Timer -->
+        <div class="hidden sm:flex items-center bg-slate-100 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300">
+          <i class="fa-regular fa-clock text-blue-600 mr-1.5"></i>
+          <span id="timerDisplay">00:00:00</span>
+        </div>
+
+        <!-- Theme Toggle -->
+        <button onclick="toggleDarkMode()" aria-label="Alternar tema" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+          <i id="themeIcon" class="fa-solid fa-moon text-xs sm:text-sm"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- HORIZONTAL SCROLLING TABS -->
+    <div class="max-w-5xl mx-auto px-3 sm:px-6 flex overflow-x-auto space-x-1.5 sm:space-x-2 py-2 border-t border-slate-200 dark:border-slate-800 text-xs font-semibold no-scrollbar">
+      <button onclick="switchTab('apostas')" id="tab-apostas" class="tab-btn shrink-0 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-extrabold flex items-center space-x-1.5 shadow-md animate-pulse">
+        <i class="fa-solid fa-fire text-amber-200"></i>
+        <span>🔥 10 Apostas de Prova</span>
+      </button>
+      <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn shrink-0 px-3.5 py-1.5 rounded-full bg-blue-600 text-white flex items-center space-x-1.5 shadow-sm">
+        <i class="fa-solid fa-list-check"></i>
+        <span>Quiz Geral (20 Qs)</span>
+      </button>
+      <button onclick="switchTab('diagramas')" id="tab-diagramas" class="tab-btn shrink-0 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center space-x-1.5">
+        <i class="fa-solid fa-diagram-project"></i>
+        <span>Diagramas & Estados</span>
+      </button>
+      <button onclick="switchTab('ligar')" id="tab-ligar" class="tab-btn shrink-0 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center space-x-1.5">
+        <i class="fa-solid fa-bezier-curve"></i>
+        <span>Ligar os Pontos</span>
+      </button>
+      <button onclick="switchTab('resumo')" id="tab-resumo" class="tab-btn shrink-0 px-3.5 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center space-x-1.5">
+        <i class="fa-solid fa-bolt"></i>
+        <span>Super Resumo</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-4xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 1: TOP 10 APOSTAS DE PROVA -->
+    <!-- ========================================================================= -->
+    <section id="sec-apostas" class="space-y-5">
+      <div class="p-5 bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-rose-500/15 rounded-3xl border-2 border-amber-300 dark:border-amber-700/60 space-y-2">
+        <div class="flex items-center space-x-2 text-amber-700 dark:text-amber-400">
+          <i class="fa-solid fa-fire text-xl animate-bounce"></i>
+          <h2 class="text-base sm:text-lg font-black">Top 10 Questões de Ouro para a Prova de SO</h2>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+          Selecionadas minuciosamente a partir das <strong>Aulas 1 a 5, Listex 2, Listex 5 e do estilo de cobrança do Prof. Ramiro</strong>. Revise cada uma com atenção máxima:
+        </p>
+      </div>
+
+      <div id="apostas-container" class="space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 2: QUIZ GERAL (20 QUESTÕES OBJETIVAS) -->
+    <!-- ========================================================================= -->
+    <section id="sec-quiz" class="hidden space-y-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Simulado Completo de Questões Objetivas</h2>
+          <p class="text-xs text-slate-500">Toque na alternativa para conferir o gabarito comentado e a explicação do SO.</p>
+        </div>
+        <button onclick="resetQuiz()" class="text-xs bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 px-3 py-1.5 rounded-lg text-slate-700 dark:text-slate-300 font-bold transition">
+          <i class="fa-solid fa-arrows-rotate mr-1"></i> Reiniciar
+        </button>
+      </div>
+
+      <div id="quiz-container" class="space-y-4 sm:space-y-5">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 3: DIAGRAMAS INTERATIVOS (ESTADOS DO PROCESSO & MEMÓRIA) -->
+    <!-- ========================================================================= -->
+    <section id="sec-diagramas" class="hidden space-y-6">
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Diagramas Interativos: Estados e Estrutura</h2>
+        <p class="text-xs text-slate-500">Arraste ou clique para posicionar os estados, transições e blocos de memória.</p>
+      </div>
+
+      <!-- DIAGRAMA 1: OS 5 ESTADOS DO PROCESSO -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <h3 class="text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center">
+          <i class="fa-solid fa-arrows-spin mr-2"></i> 1. Ciclo de Vida do Processo (5 Estados & Transições)
+        </h3>
+
+        <!-- Interactive Diagram Layout -->
+        <div class="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+            
+            <!-- NOVO -->
+            <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border space-y-2">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Criação</span>
+              <div id="slot-d1-novo" data-correct="NOVO" class="dropzone h-10 rounded-lg border-2 border-dashed flex items-center justify-center font-bold text-xs bg-slate-50 dark:bg-slate-800" onclick="handleSlotClick('d1-novo')"></div>
+            </div>
+
+            <!-- PRONTO -->
+            <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border space-y-2">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Aguardando CPU</span>
+              <div id="slot-d1-pronto" data-correct="PRONTO" class="dropzone h-10 rounded-lg border-2 border-dashed flex items-center justify-center font-bold text-xs bg-slate-50 dark:bg-slate-800" onclick="handleSlotClick('d1-pronto')"></div>
+            </div>
+
+            <!-- EXECUTANDO -->
+            <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border space-y-2">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Na CPU</span>
+              <div id="slot-d1-exec" data-correct="EXECUTANDO" class="dropzone h-10 rounded-lg border-2 border-dashed flex items-center justify-center font-bold text-xs bg-slate-50 dark:bg-slate-800" onclick="handleSlotClick('d1-exec')"></div>
+            </div>
+
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto text-center">
+            <!-- BLOQUEADO -->
+            <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border space-y-2">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Aguardando E/S ou Evento</span>
+              <div id="slot-d1-bloq" data-correct="BLOQUEADO" class="dropzone h-10 rounded-lg border-2 border-dashed flex items-center justify-center font-bold text-xs bg-slate-50 dark:bg-slate-800" onclick="handleSlotClick('d1-bloq')"></div>
+            </div>
+
+            <!-- TERMINADO -->
+            <div class="p-3 bg-white dark:bg-slate-900 rounded-xl border space-y-2">
+              <span class="text-[10px] uppercase font-bold text-slate-400">Finalizado</span>
+              <div id="slot-d1-term" data-correct="TERMINADO" class="dropzone h-10 rounded-lg border-2 border-dashed flex items-center justify-center font-bold text-xs bg-slate-50 dark:bg-slate-800" onclick="handleSlotClick('d1-term')"></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-xs font-bold text-slate-500 block mb-2">Banco de Estados (Toque para selecionar):</span>
+          <div id="bank-d1" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <!-- DIAGRAMA 2: ESTRUTURA DO PROCESSO NA MEMÓRIA -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <h3 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex items-center">
+          <i class="fa-solid fa-layer-group mr-2"></i> 2. Segmentos de Memória do Processo (Layout de Espaço de Endereçamento)
+        </h3>
+
+        <div class="max-w-md mx-auto p-4 bg-slate-900 text-slate-100 rounded-2xl space-y-2 text-center text-xs font-mono">
+          <div class="text-[10px] text-slate-400">Endereço Alto (0xFFFFFFFF)</div>
+          <div id="slot-d2-stack" data-correct="STACK (Pilha)" class="dropzone p-2.5 rounded-lg border-2 border-dashed border-rose-500 bg-rose-950/40 font-bold" onclick="handleSlotClick('d2-stack')"></div>
+          <div class="text-[10px] text-slate-500">↓ (cresce para baixo) | ↑ (cresce para cima)</div>
+          <div id="slot-d2-heap" data-correct="HEAP (Dinâmica)" class="dropzone p-2.5 rounded-lg border-2 border-dashed border-amber-500 bg-amber-950/40 font-bold" onclick="handleSlotClick('d2-heap')"></div>
+          <div id="slot-d2-data" data-correct="DATA (Globais/Estáticas)" class="dropzone p-2.5 rounded-lg border-2 border-dashed border-blue-500 bg-blue-950/40 font-bold" onclick="handleSlotClick('d2-data')"></div>
+          <div id="slot-d2-text" data-correct="TEXT (Código Binário)" class="dropzone p-2.5 rounded-lg border-2 border-dashed border-emerald-500 bg-emerald-950/40 font-bold" onclick="handleSlotClick('d2-text')"></div>
+          <div class="text-[10px] text-slate-400">Endereço Baixo (0x00000000)</div>
+        </div>
+
+        <div>
+          <span class="text-xs font-bold text-slate-500 block mb-2">Banco de Segmentos:</span>
+          <div id="bank-d2" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 4: LIGAR OS PONTOS & ASSOCIAÇÃO -->
+    <!-- ========================================================================= -->
+    <section id="sec-ligar" class="hidden space-y-6">
+      <div>
+        <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Ligar os Pontos & Associação de Conceitos</h2>
+        <p class="text-xs text-slate-500">Toque em um item da <strong>Coluna A</strong> e depois no par correspondente na <strong>Coluna B</strong>.</p>
+      </div>
+
+      <!-- JOGO 1: TIPOS DE SO -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center">
+            <i class="fa-solid fa-server mr-2"></i> 1. Tipos de Sistemas Operacionais
+          </h3>
+          <span id="match-score-1" class="text-xs font-bold px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full">0/5 pares</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="match-game-1">
+          <div class="space-y-2" id="colA-1"></div>
+          <div class="space-y-2" id="colB-1"></div>
+        </div>
+      </div>
+
+      <!-- JOGO 2: COMPONENTES DO PCB -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex items-center">
+            <i class="fa-solid fa-id-card mr-2"></i> 2. Campos do Bloco de Controle do Processo (PCB)
+          </h3>
+          <span id="match-score-2" class="text-xs font-bold px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full">0/5 pares</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="match-game-2">
+          <div class="space-y-2" id="colA-2"></div>
+          <div class="space-y-2" id="colB-2"></div>
+        </div>
+      </div>
+
+      <!-- JOGO 3: VIRTUALIZAÇÃO & THREADS -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-emerald-600 dark:text-emerald-400 flex items-center">
+            <i class="fa-solid fa-network-wired mr-2"></i> 3. Virtualização e Concorrência de Threads
+          </h3>
+          <span id="match-score-3" class="text-xs font-bold px-2.5 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full">0/5 pares</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="match-game-3">
+          <div class="space-y-2" id="colA-3"></div>
+          <div class="space-y-2" id="colB-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================================= -->
+    <!-- SECTION 5: SUPER RESUMO & DICIONÁRIO -->
+    <!-- ========================================================================= -->
+    <section id="sec-resumo" class="hidden space-y-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Super Resumo de Sistemas Operacionais</h2>
+          <p class="text-xs text-slate-500">Tabelas e regras fundamentais para memorização rápida antes da prova.</p>
+        </div>
+        <button onclick="window.print()" class="text-xs bg-blue-600 text-white px-3.5 py-1.5 rounded-lg font-bold flex items-center shadow-sm">
+          <i class="fa-solid fa-print mr-1.5"></i> Imprimir / PDF
+        </button>
+      </div>
+
+      <!-- TABELA COMPARATIVA PROCESSO X THREAD -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+        <h3 class="text-sm font-bold text-blue-600 dark:text-blue-400 flex items-center">
+          <i class="fa-solid fa-code-compare mr-2"></i> Comparativo: Processo vs Thread
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-xs text-left">
+            <thead class="bg-slate-100 dark:bg-slate-800 text-[11px] uppercase font-bold text-slate-600 dark:text-slate-300">
+              <tr>
+                <th class="p-2.5">Característica</th>
+                <th class="p-2.5">Processo</th>
+                <th class="p-2.5">Thread (Processo Leve)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr>
+                <td class="p-2.5 font-bold">Espaço de Memória</td>
+                <td class="p-2.5 text-rose-600 font-semibold">Isolado e protegido</td>
+                <td class="p-2.5 text-emerald-600 font-semibold">Compartilhado entre threads do mesmo processo</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold">Criação / Troca de Contexto</td>
+                <td class="p-2.5">Pesada e lenta (overhead de PCB e MMU)</td>
+                <td class="p-2.5 text-emerald-600 font-semibold">Leve e ultrarrápida (mantém espaço de memória)</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold">Comunicação</td>
+                <td class="p-2.5">Via IPC (Pipes, Sockets, Shared Memory)</td>
+                <td class="p-2.5 text-emerald-600 font-semibold">Direta via variáveis globais e Heap</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold">Contexto Próprio</td>
+                <td class="p-2.5">PCB completo, MMU, arquivos</td>
+                <td class="p-2.5">TID, Program Counter (PC), Registradores, Pilha (Stack)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TABELA VIRTUALIZAÇÃO -->
+      <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+        <h3 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex items-center">
+          <i class="fa-solid fa-cubes mr-2"></i> Hypervisors & Containers
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+          <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border">
+            <strong class="text-blue-600 block mb-1">Hypervisor Tipo 1 (Bare-metal)</strong>
+            Executa direto no hardware físico. Alto desempenho. Ex: VMware ESXi, Hyper-V, KVM, Xen.
+          </div>
+          <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border">
+            <strong class="text-indigo-600 block mb-1">Hypervisor Tipo 2 (Hosted)</strong>
+            Executa como aplicação sobre SO hospedeiro. Ideal para testes/desktop. Ex: VirtualBox.
+          </div>
+          <div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl border">
+            <strong class="text-emerald-600 block mb-1">Containers (Docker)</strong>
+            Virtualiza o SO compartilhando o mesmo kernel. Extremamente leve e rápido.
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-slate-200 dark:border-slate-800 py-6 text-center text-xs text-slate-500">
+    Desenvolvido para revisão e simulado da disciplina de Sistemas Operacionais (ITPSTOP) • TSI IFSP Itapetininga
+  </footer>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    const apostasData = [
+      {
+        id: 1,
+        aula: "Aula 02 / Tipos de SO",
+        title: "1. Hard Deadline vs Soft Deadline em Sistemas de Tempo Real (RTOS)",
+        question: "Qual a diferença crítica entre um sistema de tempo real com 'Hard Deadline' e outro com 'Soft Deadline'?",
+        answer: "• <strong>Hard Deadline:</strong> O cumprimento do prazo é rigorosamente obrigatório. O atraso na resposta gera uma <strong>falha catastrófica total</strong> no sistema (ex: controle de voo de aeronaves, airbag automotivo, robôs cirúrgicos, usinas nucleares).<br>• <strong>Soft Deadline:</strong> O não cumprimento do prazo reduz a utilidade ou qualidade do serviço, mas <strong>não causa desastre</strong> (ex: streaming de áudio/vídeo, jogos online)."
+      },
+      {
+        id: 2,
+        aula: "Aula 03 / Virtualização",
+        title: "2. Hypervisor Tipo 1 (Bare-Metal) vs Hypervisor Tipo 2 (Hosted)",
+        question: "Por que os data centers e provedores de nuvem utilizam Hypervisors do Tipo 1 em vez do Tipo 2?",
+        answer: "O Hypervisor Tipo 1 (Bare-metal) executa <strong>diretamente sobre o hardware físico</strong> sem a camada intermediária de um sistema operacional hospedeiro. Isso garante <strong>desempenho muito superior, menor latência e maior segurança/isolamento</strong>. Exemplos: VMware ESXi, KVM, Xen, Microsoft Hyper-V."
+      },
+      {
+        id: 3,
+        aula: "Aula 04 / Processos",
+        title: "3. As 4 Transições de Estado do Processo e o Papel do Escalonador",
+        question: "Explique o que causa as transições: Pronto -> Executando, Executando -> Pronto e Executando -> Bloqueado.",
+        answer: "1. <strong>Pronto -> Executando:</strong> O escalonador de CPU realiza o <em>despacho (dispatch)</em> e entrega o processador ao processo.<br>2. <strong>Executando -> Pronto:</strong> O processo sofreu <em>preempção</em> por fim de sua fatia de tempo (time-slice) ou chegada de processo prioritário.<br>3. <strong>Executando -> Bloqueado:</strong> O processo solicitou uma operação de Entrada/Saída (E/S) ou espera por um evento externo."
+      },
+      {
+        id: 4,
+        aula: "Aula 04 / Processos",
+        title: "4. Troca de Contexto (Context Switch) e Overhead",
+        question: "O que acontece durante uma troca de contexto e por que ela é considerada puro overhead?",
+        answer: "O SO salva o contexto atual do processo (registradores, Program Counter, ponteiros) em seu <strong>PCB (Process Control Block)</strong> e restaura o contexto de outro processo a partir do PCB dele. É considerado <em>overhead</em> porque a CPU consome ciclos de clock executando código interno do SO, sem realizar trabalho útil para o usuário."
+      },
+      {
+        id: 5,
+        aula: "Aula 05 / Threads",
+        title: "5. O que Threads do mesmo processo COMPARTILHAM e o que é EXCLUSIVO?",
+        question: "Quais recursos são compartilhados entre threads do mesmo processo e quais são exclusivos de cada thread?",
+        answer: "• <strong>Compartilham:</strong> Espaço de endereçamento de memória, código executável (Text), variáveis globais (Data), Heap dinâmico e arquivos/sockets abertos.<br>• <strong>Exclusivo de cada Thread:</strong> Thread ID (TID), Contador de Programa (PC), Registradores da CPU e <strong>Pilha de Execução própria (Stack)</strong>."
+      },
+      {
+        id: 6,
+        aula: "Aula 05 / Threads",
+        title: "6. Condição de Corrida (Race Condition) e Exclusão Mútua (Mutex)",
+        question: "O que é uma condição de corrida e como ela é resolvida em ambientes multithread?",
+        answer: "Ocorre quando duas ou mais threads acessam e modificam a mesma variável compartilhada simultaneamente, tornando o resultado final dependente da ordem de execução. Resolve-se protegendo a <em>Seção Crítica</em> com mecanismos de sincronização, como <strong>Mutex (Exclusão Mútua)</strong> ou <strong>Semáforos</strong>."
+      },
+      {
+        id: 7,
+        aula: "Aula 04 / Processos",
+        title: "7. Processos CPU-bound vs Processos I/O-bound",
+        question: "Como o comportamento de um processo CPU-bound difere de um I/O-bound?",
+        answer: "• <strong>CPU-bound:</strong> Gasta quase todo o seu tempo realizando cálculos intensivos no processador; usa fatias de tempo inteiras.<br>• <strong>I/O-bound:</strong> Passa a maior parte do tempo bloqueado esperando operações de entrada/saída (disco, rede, digitação); usa fatias pequenas de CPU."
+      },
+      {
+        id: 8,
+        aula: "Aula 05 / Threads",
+        title: "8. Modelo de Threads 1:1 (Kernel) vs N:1 (Usuário)",
+        question: "Qual a grande desvantagem do modelo de threads Muitos para Um (N:1 em espaço de usuário)?",
+        answer: "No modelo N:1, o kernel enxerga apenas 1 processo único. Se qualquer uma das threads realizar uma chamada de sistema bloqueante (ex: leitura de disco), <strong>o processo inteiro é bloqueado</strong>, paralisando todas as outras threads. Além disso, não aproveita múltiplos núcleos de CPU."
+      },
+      {
+        id: 9,
+        aula: "Aula 02 / Tipos de SO",
+        title: "9. Sistemas Fortemente Acoplados vs Fracamente Acoplados (Cluster Beowulf)",
+        question: "Diferencie sistemas fortemente acoplados de sistemas fracamente acoplados (Listex 2).",
+        answer: "• <strong>Fortemente Acoplados (SMP):</strong> Múltiplos processadores compartilham a <strong>mesma memória física principal</strong> sob um único SO.<br>• <strong>Fracamente Acoplados (Clusters):</strong> Múltiplos computadores autônomos com seu próprio SO e memória, conectados via rede de alta velocidade (ex: Cluster Beowulf)."
+      },
+      {
+        id: 10,
+        aula: "Aula 05 / Threads",
+        title: "10. Concorrência vs Paralelismo Real",
+        question: "Qual a diferença essencial entre concorrência e paralelismo?",
+        answer: "• <strong>Concorrência:</strong> Capacidade de lidar com múltiplas tarefas intercalando-as no tempo através de chaveamento rápido (acontece mesmo em 1 único núcleo).<br>• <strong>Paralelismo:</strong> Execução <strong>simultânea no mesmo instante físico</strong> em múltiplos núcleos ou processadores distintos."
+      }
+    ];
+
+    const quizQuestions = [
+      {
+        id: 1,
+        aula: "Aula 02 / Tipos de SO",
+        question: "Um sistema operacional em que os programas são submetidos para processamento em fila, sem qualquer interação direta com o usuário durante a execução, é classificado como:",
+        options: [
+          "Sistema de Tempo Compartilhado (Time-Sharing)",
+          "Sistema Batch (Lote)",
+          "Sistema de Tempo Real com Hard Deadline",
+          "Sistema Monousuário Interativo",
+          "Sistema Distribuído"
+        ],
+        correct: 1,
+        explanation: "Os sistemas Batch (em lote) processam jobs sequencialmente sem interação direta do usuário através de arquivos em disco ou cartões."
+      },
+      {
+        id: 2,
+        aula: "Aula 03 / Virtualização",
+        question: "O Hypervisor do Tipo 1 (Bare-Metal) é caracterizado por:",
+        options: [
+          "Executar como um aplicativo comum dentro do Windows ou macOS.",
+          "Executar diretamente sobre o hardware físico, sem necessidade de um sistema operacional hospedeiro prévio.",
+          "Emular o hardware inteiramente por software através de interpretadores lentos.",
+          "Necessitar de containers Docker para funcionar.",
+          "Ser exclusivo para computadores monoprogramáveis."
+        ],
+        correct: 1,
+        explanation: "Hypervisors Tipo 1 (como VMware ESXi, KVM e Hyper-V) rodam diretamente no hardware ('bare-metal'), oferecendo desempenho de nível empresarial."
+      },
+      {
+        id: 3,
+        aula: "Aula 04 / Processos",
+        title: "Estrutura do PCB",
+        question: "No Bloco de Controle do Processo (PCB), qual informação indica o endereço da próxima instrução de máquina a ser executada pela CPU?",
+        options: [
+          "Process ID (PID)",
+          "Contador de Programa (Program Counter - PC)",
+          "Ponteiro de Pilha (Stack Pointer)",
+          "Tabela de Páginas",
+          "Lista de Arquivos Abertos"
+        ],
+        correct: 1,
+        explanation: "O Contador de Programa (PC) é o registrador que armazena o endereço da próxima instrução a ser buscada e executada."
+      },
+      {
+        id: 4,
+        aula: "Aula 04 / Estados do Processo",
+        question: "Quando um processo que está no estado EXECUTANDO faz uma solicitação de leitura de arquivo em disco, para qual estado ele é transferido?",
+        options: [
+          "Pronto (Ready)",
+          "Bloqueado / Espera (Waiting/Blocked)",
+          "Terminado (Terminated)",
+          "Novo (New)",
+          "Preemptado"
+        ],
+        correct: 1,
+        explanation: "Ao solicitar uma operação de E/S, o processo não pode continuar usando a CPU até que os dados cheguem, indo para o estado Bloqueado."
+      },
+      {
+        id: 5,
+        aula: "Aula 05 / Threads",
+        question: "Em um processo multithread, o que cada thread possui de forma EXCLUSIVA (não compartilhado com as outras threads)?",
+        options: [
+          "Espaço de endereçamento e código do programa",
+          "Variáveis globais e Heap",
+          "Pilha de Execução (Stack), Registradores e Contador de Programa (PC)",
+          "Arquivos e descritores de rede abertos",
+          "Tabela de páginas da memória"
+        ],
+        correct: 2,
+        explanation: "Cada thread possui seu próprio fluxo de execução, exigindo seu próprio conjunto de registradores, PC e pilha (Stack) para chamadas de função locais."
+      },
+      {
+        id: 6,
+        aula: "Aula 05 / Concorrência",
+        question: "Uma 'Condição de Corrida' (Race Condition) ocorre quando:",
+        options: [
+          "A CPU atinge 100% de uso por tempo prolongado.",
+          "Múltiplas threads acessam e alteram dados compartilhados simultaneamente sem sincronização, tornando o resultado imprevisível.",
+          "O escalonador entra em loop infinito.",
+          "Uma thread consome toda a memória RAM disponível.",
+          "Ocorre falta de página na memória virtual."
+        ],
+        correct: 1,
+        explanation: "A condição de corrida ocorre pela falta de sincronização em seções críticas quando várias threads manipulam a mesma memória compartilhada."
+      },
+      {
+        id: 7,
+        aula: "Aula 02 / Múltiplos Processadores",
+        question: "Um sistema com múltiplos processadores em que todas as CPUs compartilham a mesma memória física principal sob o controle de um único SO é chamado de:",
+        options: [
+          "Sistema Fracamente Acoplado",
+          "Sistema Fortemente Acoplado (Multiprocessador / SMP)",
+          "Cluster Beowulf",
+          "Sistema em Tempo Real com Soft Deadline",
+          "Sistema de Arquivos Distribuído"
+        ],
+        correct: 1,
+        explanation: "Sistemas Fortemente Acoplados (SMP / Tightly Coupled) compartilham uma memória física única e barramentos comuns."
+      },
+      {
+        id: 8,
+        aula: "Aula 04 / Processos",
+        question: "No espaço de endereçamento de um processo na memória, qual segmento é responsável por armazenar a memória alocada dinamicamente pelo programador (ex: malloc em C / new em C++)?",
+        options: [
+          "Stack (Pilha)",
+          "Heap",
+          "Text (Código)",
+          "Data (Dados)",
+          "PCB"
+        ],
+        correct: 1,
+        explanation: "O segmento Heap é onde ocorre a alocação dinâmica de memória em tempo de execução, crescendo em direção aos endereços altos."
+      },
+      {
+        id: 9,
+        aula: "Aula 03 / Containers",
+        question: "Qual a principal vantagem da virtualização baseada em Containers (ex: Docker) em relação às Máquinas Virtuais tradicionais?",
+        options: [
+          "Containers carregam um kernel próprio completo para cada instância.",
+          "Containers compartilham o mesmo kernel do SO hospedeiro, sendo muito mais leves, consumindo menos memória e iniciando em milissegundos.",
+          "Containers rodam apenas em hardware do Tipo 1.",
+          "Containers eliminam a necessidade de memória RAM.",
+          "Containers não podem se comunicar em rede."
+        ],
+        correct: 1,
+        explanation: "Containers virtualizam a nível de SO compartilhando o kernel do host através de namespaces e cgroups, evitando o peso de carregar SOs convidados completos."
+      },
+      {
+        id: 10,
+        aula: "Aula 05 / Sincronização",
+        question: "O mecanismo de sincronização que garante que apenas UMA thread por vez possa executar as instruções dentro de uma seção crítica é chamado de:",
+        options: [
+          "Escalonador Round-Robin",
+          "Mutex (Exclusão Mútua)",
+          "Time-slice",
+          "Hypercall",
+          "Troca de Contexto"
+        ],
+        correct: 1,
+        explanation: "O Mutex (Mutual Exclusion) funciona como uma chave única: apenas a thread que adquire o lock pode entrar na seção crítica."
+      }
+    ];
+
+    const matchGamesData = {
+      1: {
+        pairs: [
+          { id: "so1", a: "Sistema Batch (Lote)", b: "Processamento sequencial de jobs em fila sem interação do usuário." },
+          { id: "so2", a: "Time-Sharing", b: "Divisão do processador em fatias de tempo (time-slices) para múltiplos usuários." },
+          { id: "so3", a: "RTOS Hard Deadline", b: "Cumprimento obrigatório do prazo onde o atraso gera falha catastrófica." },
+          { id: "so4", a: "RTOS Soft Deadline", b: "Atraso no resultado reduz a utilidade mas não causa catástrofe." },
+          { id: "so5", a: "Cluster Beowulf", b: "Sistema fracamente acoplado formado por PCs comuns interligados em rede." }
+        ]
+      },
+      2: {
+        pairs: [
+          { id: "pcb1", a: "PID (Process ID)", b: "Identificador numérico exclusivo atribuído a cada processo pelo SO." },
+          { id: "pcb2", a: "Program Counter (PC)", b: "Endereço de memória da próxima instrução a ser executada." },
+          { id: "pcb3", a: "Registradores de CPU", b: "Contexto de hardware salvo no PCB durante a troca de contexto." },
+          { id: "pcb4", a: "Tabela de Páginas", b: "Informações de gerenciamento e limites de memória do processo." },
+          { id: "pcb5", a: "Status de E/S", b: "Lista de dispositivos e arquivos abertos alocados ao processo." }
+        ]
+      },
+      3: {
+        pairs: [
+          { id: "v1", a: "Hypervisor Tipo 1", b: "Executa direto no hardware físico (Bare-metal) com alto desempenho." },
+          { id: "v2", a: "Hypervisor Tipo 2", b: "Executa como aplicação sobre um SO hospedeiro (ex: VirtualBox)." },
+          { id: "v3", a: "Containers (Docker)", b: "Isolamento a nível de SO compartilhando o mesmo kernel do host." },
+          { id: "v4", a: "Mutex", b: "Trava binária para garantir exclusão mútua em seções críticas." },
+          { id: "v5", a: "Thread Stack", b: "Pilha exclusiva de cada thread para variáveis locais e funções." }
+        ]
+      }
+    };
+
+    let userAnswers = {};
+    let selectedItem = { gameId: null, side: null, id: null };
+    let matchProgress = { 1: 0, 2: 0, 3: 0 };
+    let totalScore = 0;
+    let selectedToken = null;
+    let slotAssignments = {};
+
+    function init() {
+      renderApostas();
+      renderQuiz();
+      renderDiagramTokens();
+      initMatchGame(1);
+      initMatchGame(2);
+      initMatchGame(3);
+      startTimer();
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll("main > section").forEach(sec => sec.classList.add("hidden"));
+      document.getElementById("sec-" + tabId).classList.remove("hidden");
+
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("bg-blue-600", "text-white", "shadow-sm");
+        btn.classList.add("bg-slate-100", "dark:bg-slate-800", "text-slate-600", "dark:text-slate-300");
+      });
+
+      const activeBtn = document.getElementById("tab-" + tabId);
+      if (tabId === "apostas") {
+        activeBtn.className = "tab-btn shrink-0 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-extrabold flex items-center space-x-1.5 shadow-md";
+      } else {
+        activeBtn.classList.remove("bg-slate-100", "dark:bg-slate-800", "text-slate-600", "dark:text-slate-300");
+        activeBtn.classList.add("bg-blue-600", "text-white", "shadow-sm");
+      }
+    }
+
+    function renderApostas() {
+      const container = document.getElementById("apostas-container");
+      container.innerHTML = "";
+      apostasData.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-amber-600 uppercase tracking-wider bg-amber-50 dark:bg-amber-950/40 px-3 py-1 rounded-full border border-amber-200 dark:border-amber-800">
+              🔥 Aposta ${item.id}
+            </span>
+            <span class="text-[11px] font-bold text-slate-400">${item.aula}</span>
+          </div>
+          <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">${item.title}</h3>
+          <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300"><strong>Pergunta Típica de Prova:</strong> "${item.question}"</p>
+          <div class="p-3.5 bg-blue-50 dark:bg-blue-950/30 rounded-2xl border border-blue-200 dark:border-blue-900/60 text-xs text-blue-950 dark:text-blue-200 leading-relaxed">
+            <strong class="font-bold text-blue-700 dark:text-blue-300 block mb-1">💡 Resposta Padrão-Ouro do Professor:</strong>
+            ${item.answer}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderQuiz() {
+      const container = document.getElementById("quiz-container");
+      container.innerHTML = "";
+      document.getElementById("totalQuestionsDisplay").innerText = quizQuestions.length;
+
+      quizQuestions.forEach((q, idx) => {
+        const card = document.createElement("div");
+        card.className = "bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3";
+        card.id = `quiz-card-${q.id}`;
+
+        let optsHtml = "";
+        q.options.forEach((opt, optIdx) => {
+          optsHtml += `
+            <button onclick="handleOptionSelect(${q.id}, ${optIdx})" 
+                    id="opt-${q.id}-${optIdx}"
+                    class="w-full text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 hover:bg-blue-50/50 dark:hover:bg-slate-800/60 transition flex items-start space-x-2.5 text-xs sm:text-sm active:scale-[0.99]">
+              <span class="w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-[10px] shrink-0 text-slate-700 dark:text-slate-300 mt-0.5">
+                ${String.fromCharCode(65 + optIdx)}
+              </span>
+              <span class="text-slate-700 dark:text-slate-200 font-medium leading-snug">${opt}</span>
+            </button>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2.5 py-0.5 rounded-full">
+              ${q.aula}
+            </span>
+            <span class="text-[10px] text-slate-400 font-bold">${idx + 1} de ${quizQuestions.length}</span>
+          </div>
+          <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-snug">${q.question}</h3>
+          <div class="space-y-2">
+            ${optsHtml}
+          </div>
+          <div id="feedback-${q.id}" class="hidden p-3.5 rounded-xl text-xs sm:text-sm transition"></div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function handleOptionSelect(qId, selectedIdx) {
+      if (userAnswers[qId] !== undefined) return;
+
+      const q = quizQuestions.find(item => item.id === qId);
+      userAnswers[qId] = selectedIdx;
+
+      const feedbackBox = document.getElementById(`feedback-${qId}`);
+      feedbackBox.classList.remove("hidden");
+
+      q.options.forEach((_, idx) => {
+        const btn = document.getElementById(`opt-${qId}-${idx}`);
+        if (idx === q.correct) {
+          btn.classList.add("border-emerald-500", "bg-emerald-50", "dark:bg-emerald-950/40", "dark:border-emerald-700");
+          btn.querySelector("span:first-child").classList.add("bg-emerald-500", "text-white");
+        } else if (idx === selectedIdx && selectedIdx !== q.correct) {
+          btn.classList.add("border-rose-500", "bg-rose-50", "dark:bg-rose-950/40", "dark:border-rose-700");
+          btn.querySelector("span:first-child").classList.add("bg-rose-500", "text-white");
+        }
+      });
+
+      if (selectedIdx === q.correct) {
+        totalScore++;
+        feedbackBox.className = "p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs";
+        feedbackBox.innerHTML = `<strong>Correto!</strong> ${q.explanation}`;
+      } else {
+        feedbackBox.className = "p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs";
+        feedbackBox.innerHTML = `<strong>Incorreto!</strong> ${q.explanation}`;
+      }
+
+      document.getElementById("scoreDisplay").innerText = totalScore;
+    }
+
+    function resetQuiz() {
+      userAnswers = {};
+      totalScore = 0;
+      document.getElementById("scoreDisplay").innerText = "0";
+      renderQuiz();
+    }
+
+    const tokensD1 = ["NOVO", "PRONTO", "EXECUTANDO", "BLOQUEADO", "TERMINADO"];
+    const tokensD2 = ["STACK (Pilha)", "HEAP (Dinâmica)", "DATA (Globais/Estáticas)", "TEXT (Código Binário)"];
+
+    function renderDiagramTokens() {
+      const b1 = document.getElementById("bank-d1");
+      b1.innerHTML = "";
+      tokensD1.forEach(t => {
+        const btn = document.createElement("button");
+        btn.className = "draggable-token px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold shadow-sm";
+        btn.innerText = t;
+        btn.onclick = () => selectToken(t, btn);
+        b1.appendChild(btn);
+      });
+
+      const b2 = document.getElementById("bank-d2");
+      b2.innerHTML = "";
+      tokensD2.forEach(t => {
+        const btn = document.createElement("button");
+        btn.className = "draggable-token px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold shadow-sm";
+        btn.innerText = t;
+        btn.onclick = () => selectToken(t, btn);
+        b2.appendChild(btn);
+      });
+    }
+
+    function selectToken(val, el) {
+      document.querySelectorAll(".draggable-token").forEach(b => b.classList.remove("selected-for-drop"));
+      if (selectedToken && selectedToken.val === val) {
+        selectedToken = null;
+        return;
+      }
+      selectedToken = { val, el };
+      el.classList.add("selected-for-drop");
+    }
+
+    function handleSlotClick(slotId) {
+      const slot = document.getElementById("slot-" + slotId);
+      if (slotAssignments[slotId] && !selectedToken) {
+        delete slotAssignments[slotId];
+        slot.innerText = "";
+        slot.classList.remove("filled");
+        return;
+      }
+      if (selectedToken) {
+        slotAssignments[slotId] = selectedToken.val;
+        slot.innerText = selectedToken.val;
+        slot.classList.add("filled");
+        document.querySelectorAll(".draggable-token").forEach(b => b.classList.remove("selected-for-drop"));
+        selectedToken = null;
+      }
+    }
+
+    function shuffle(arr) {
+      return arr.slice().sort(() => Math.random() - 0.5);
+    }
+
+    function initMatchGame(gameId) {
+      const data = matchGamesData[gameId];
+      const colA = document.getElementById(`colA-${gameId}`);
+      const colB = document.getElementById(`colB-${gameId}`);
+      colA.innerHTML = "";
+      colB.innerHTML = "";
+
+      const shuffledA = shuffle(data.pairs);
+      const shuffledB = shuffle(data.pairs);
+
+      shuffledA.forEach(pair => {
+        const item = document.createElement("button");
+        item.className = "w-full text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-slate-800 transition text-xs sm:text-sm font-semibold connecting-card active:scale-[0.98]";
+        item.id = `match-${gameId}-A-${pair.id}`;
+        item.innerText = pair.a;
+        item.onclick = () => handleMatchClick(gameId, "A", pair.id);
+        colA.appendChild(item);
+      });
+
+      shuffledB.forEach(pair => {
+        const item = document.createElement("button");
+        item.className = "w-full text-left p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 hover:bg-blue-50 dark:hover:bg-slate-800 transition text-xs leading-relaxed connecting-card text-slate-600 dark:text-slate-300 active:scale-[0.98]";
+        item.id = `match-${gameId}-B-${pair.id}`;
+        item.innerText = pair.b;
+        item.onclick = () => handleMatchClick(gameId, "B", pair.id);
+        colB.appendChild(item);
+      });
+    }
+
+    function handleMatchClick(gameId, side, pairId) {
+      const cur = document.getElementById(`match-${gameId}-${side}-${pairId}`);
+      if (cur.classList.contains("matched")) return;
+
+      if (!selectedItem.gameId) {
+        selectedItem = { gameId, side, id: pairId };
+        cur.classList.add("selected");
+        return;
+      }
+
+      if (selectedItem.gameId === gameId && selectedItem.side === side) {
+        document.getElementById(`match-${selectedItem.gameId}-${selectedItem.side}-${selectedItem.id}`).classList.remove("selected");
+        selectedItem = { gameId, side, id: pairId };
+        cur.classList.add("selected");
+        return;
+      }
+
+      if (selectedItem.gameId === gameId && selectedItem.side !== side) {
+        const prev = document.getElementById(`match-${selectedItem.gameId}-${selectedItem.side}-${selectedItem.id}`);
+        prev.classList.remove("selected");
+
+        if (selectedItem.id === pairId) {
+          prev.classList.add("matched");
+          cur.classList.add("matched");
+          prev.innerHTML += ` <i class="fa-solid fa-check text-emerald-600 ml-1"></i>`;
+          cur.innerHTML += ` <i class="fa-solid fa-check text-emerald-600 ml-1"></i>`;
+          matchProgress[gameId]++;
+          document.getElementById(`match-score-${gameId}`).innerText = `${matchProgress[gameId]}/${matchGamesData[gameId].pairs.length} pares`;
+
+          if (matchProgress[gameId] === matchGamesData[gameId].pairs.length) {
+            document.getElementById(`match-score-${gameId}`).className = "text-xs font-bold px-2.5 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 rounded-full";
+            document.getElementById(`match-score-${gameId}`).innerText = "✓ Concluído!";
+          }
+        } else {
+          prev.classList.add("border-rose-500", "bg-rose-100");
+          cur.classList.add("border-rose-500", "bg-rose-100");
+          setTimeout(() => {
+            prev.classList.remove("border-rose-500", "bg-rose-100");
+            cur.classList.remove("border-rose-500", "bg-rose-100");
+          }, 500);
+        }
+
+        selectedItem = { gameId: null, side: null, id: null };
+      }
+    }
+
+    let secondsElapsed = 0;
+    function startTimer() {
+      setInterval(() => {
+        secondsElapsed++;
+        const hrs = String(Math.floor(secondsElapsed / 3600)).padStart(2, "0");
+        const mins = String(Math.floor((secondsElapsed % 3600) / 60)).padStart(2, "0");
+        const secs = String(secondsElapsed % 60).padStart(2, "0");
+        document.getElementById("timerDisplay").innerText = `${hrs}:${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle("dark");
+      const icon = document.getElementById("themeIcon");
+      if (document.documentElement.classList.contains("dark")) {
+        icon.className = "fa-solid fa-sun text-xs sm:text-sm";
+      } else {
+        icon.className = "fa-solid fa-moon text-xs sm:text-sm";
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>
