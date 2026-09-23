@@ -516,148 +516,287 @@
     ];
 
     const quizQuestions = [
-      {
-        id: 1,
-        aula: "Aula 02 / Tipos de SO",
-        question: "Um sistema operacional em que os programas são submetidos para processamento em fila, sem qualquer interação direta com o usuário durante a execução, é classificado como:",
-        options: [
-          "Sistema de Tempo Compartilhado (Time-Sharing)",
-          "Sistema Batch (Lote)",
-          "Sistema de Tempo Real com Hard Deadline",
-          "Sistema Monousuário Interativo",
-          "Sistema Distribuído"
-        ],
-        correct: 1,
-        explanation: "Os sistemas Batch (em lote) processam jobs sequencialmente sem interação direta do usuário através de arquivos em disco ou cartões."
-      },
-      {
-        id: 2,
-        aula: "Aula 03 / Virtualização",
-        question: "O Hypervisor do Tipo 1 (Bare-Metal) é caracterizado por:",
-        options: [
-          "Executar como um aplicativo comum dentro do Windows ou macOS.",
-          "Executar diretamente sobre o hardware físico, sem necessidade de um sistema operacional hospedeiro prévio.",
-          "Emular o hardware inteiramente por software através de interpretadores lentos.",
-          "Necessitar de containers Docker para funcionar.",
-          "Ser exclusivo para computadores monoprogramáveis."
-        ],
-        correct: 1,
-        explanation: "Hypervisors Tipo 1 (como VMware ESXi, KVM e Hyper-V) rodam diretamente no hardware ('bare-metal'), oferecendo desempenho de nível empresarial."
-      },
-      {
-        id: 3,
-        aula: "Aula 04 / Processos",
-        title: "Estrutura do PCB",
-        question: "No Bloco de Controle do Processo (PCB), qual informação indica o endereço da próxima instrução de máquina a ser executada pela CPU?",
-        options: [
-          "Process ID (PID)",
-          "Contador de Programa (Program Counter - PC)",
-          "Ponteiro de Pilha (Stack Pointer)",
-          "Tabela de Páginas",
-          "Lista de Arquivos Abertos"
-        ],
-        correct: 1,
-        explanation: "O Contador de Programa (PC) é o registrador que armazena o endereço da próxima instrução a ser buscada e executada."
-      },
-      {
-        id: 4,
-        aula: "Aula 04 / Estados do Processo",
-        question: "Quando um processo que está no estado EXECUTANDO faz uma solicitação de leitura de arquivo em disco, para qual estado ele é transferido?",
-        options: [
-          "Pronto (Ready)",
-          "Bloqueado / Espera (Waiting/Blocked)",
-          "Terminado (Terminated)",
-          "Novo (New)",
-          "Preemptado"
-        ],
-        correct: 1,
-        explanation: "Ao solicitar uma operação de E/S, o processo não pode continuar usando a CPU até que os dados cheguem, indo para o estado Bloqueado."
-      },
-      {
-        id: 5,
-        aula: "Aula 05 / Threads",
-        question: "Em um processo multithread, o que cada thread possui de forma EXCLUSIVA (não compartilhado com as outras threads)?",
-        options: [
-          "Espaço de endereçamento e código do programa",
-          "Variáveis globais e Heap",
-          "Pilha de Execução (Stack), Registradores e Contador de Programa (PC)",
-          "Arquivos e descritores de rede abertos",
-          "Tabela de páginas da memória"
-        ],
-        correct: 2,
-        explanation: "Cada thread possui seu próprio fluxo de execução, exigindo seu próprio conjunto de registradores, PC e pilha (Stack) para chamadas de função locais."
-      },
-      {
-        id: 6,
-        aula: "Aula 05 / Concorrência",
-        question: "Uma 'Condição de Corrida' (Race Condition) ocorre quando:",
-        options: [
-          "A CPU atinge 100% de uso por tempo prolongado.",
-          "Múltiplas threads acessam e alteram dados compartilhados simultaneamente sem sincronização, tornando o resultado imprevisível.",
-          "O escalonador entra em loop infinito.",
-          "Uma thread consome toda a memória RAM disponível.",
-          "Ocorre falta de página na memória virtual."
-        ],
-        correct: 1,
-        explanation: "A condição de corrida ocorre pela falta de sincronização em seções críticas quando várias threads manipulam a mesma memória compartilhada."
-      },
-      {
-        id: 7,
-        aula: "Aula 02 / Múltiplos Processadores",
-        question: "Um sistema com múltiplos processadores em que todas as CPUs compartilham a mesma memória física principal sob o controle de um único SO é chamado de:",
-        options: [
-          "Sistema Fracamente Acoplado",
-          "Sistema Fortemente Acoplado (Multiprocessador / SMP)",
-          "Cluster Beowulf",
-          "Sistema em Tempo Real com Soft Deadline",
-          "Sistema de Arquivos Distribuído"
-        ],
-        correct: 1,
-        explanation: "Sistemas Fortemente Acoplados (SMP / Tightly Coupled) compartilham uma memória física única e barramentos comuns."
-      },
-      {
-        id: 8,
-        aula: "Aula 04 / Processos",
-        question: "No espaço de endereçamento de um processo na memória, qual segmento é responsável por armazenar a memória alocada dinamicamente pelo programador (ex: malloc em C / new em C++)?",
-        options: [
-          "Stack (Pilha)",
-          "Heap",
-          "Text (Código)",
-          "Data (Dados)",
-          "PCB"
-        ],
-        correct: 1,
-        explanation: "O segmento Heap é onde ocorre a alocação dinâmica de memória em tempo de execução, crescendo em direção aos endereços altos."
-      },
-      {
-        id: 9,
-        aula: "Aula 03 / Containers",
-        question: "Qual a principal vantagem da virtualização baseada em Containers (ex: Docker) em relação às Máquinas Virtuais tradicionais?",
-        options: [
-          "Containers carregam um kernel próprio completo para cada instância.",
-          "Containers compartilham o mesmo kernel do SO hospedeiro, sendo muito mais leves, consumindo menos memória e iniciando em milissegundos.",
-          "Containers rodam apenas em hardware do Tipo 1.",
-          "Containers eliminam a necessidade de memória RAM.",
-          "Containers não podem se comunicar em rede."
-        ],
-        correct: 1,
-        explanation: "Containers virtualizam a nível de SO compartilhando o kernel do host através de namespaces e cgroups, evitando o peso de carregar SOs convidados completos."
-      },
-      {
-        id: 10,
-        aula: "Aula 05 / Sincronização",
-        question: "O mecanismo de sincronização que garante que apenas UMA thread por vez possa executar as instruções dentro de uma seção crítica é chamado de:",
-        options: [
-          "Escalonador Round-Robin",
-          "Mutex (Exclusão Mútua)",
-          "Time-slice",
-          "Hypercall",
-          "Troca de Contexto"
-        ],
-        correct: 1,
-        explanation: "O Mutex (Mutual Exclusion) funciona como uma chave única: apenas a thread que adquire o lock pode entrar na seção crítica."
-      }
-    ];
+  {
+    "id": 1,
+    "aula": "Aula 01 / Fundamentos",
+    "question": "Segundo a definição fundamental de Sistemas Operacionais, quais são as DUAS funções primárias de um SO?",
+    "options": [
+      "Compilar código C++ e executar testes unitários.",
+      "Atuar como Máquina Estendida (abstração de hardware) e como Gerenciador de Recursos (alocação justa e eficiente de CPU, memória e E/S).",
+      "Substituir o disco rígido por memória flash.",
+      "Criar conexões Wi-Fi sem necessidade de roteador.",
+      "Executar apenas programas em modo monoprogramável."
+    ],
+    "correct": 1,
+    "explanation": "O SO atua como Máquina Estendida (escondendo a complexidade do hardware) e como Gerenciador de Recursos (arbitrando o uso ordenado de CPU, memória e periféricos)."
+  },
+  {
+    "id": 2,
+    "aula": "Aula 01 / História",
+    "question": "Em 1969, nos laboratórios Bell Labs, Ken Thompson desenvolveu um sistema operacional revolucionário que serviu de base para 90% dos SOs modernos (Linux, macOS, BSD, Android). Trata-se do:",
+    "options": [
+      "MS-DOS",
+      "Unix",
+      "Windows 1.0",
+      "CTSS",
+      "MULTICS"
+    ],
+    "correct": 1,
+    "explanation": "O Unix, desenvolvido em 1969 e reescrito em C em 1975, é a espinha dorsal da computação moderna e padronizou o modelo POSIX."
+  },
+  {
+    "id": 3,
+    "aula": "Aula 02 / Tipos de SO",
+    "question": "Um sistema operacional em que os programas (jobs) são submetidos para processamento em fila sem qualquer interação direta do usuário durante a execução é classificado como:",
+    "options": [
+      "Sistema de Tempo Compartilhado (Time-Sharing)",
+      "Sistema Batch (Lote)",
+      "Sistema de Tempo Real com Hard Deadline",
+      "Sistema Monousuário Interativo",
+      "Sistema Distribuído"
+    ],
+    "correct": 1,
+    "explanation": "Os sistemas Batch (em lote) processam jobs sequencialmente sem intervenção de usuário através de arquivos em disco ou cartões perfurados."
+  },
+  {
+    "id": 4,
+    "aula": "Aula 02 / Tipos de SO",
+    "question": "Em um Sistema Operacional de Tempo Real (RTOS), qual a diferença entre Hard Deadline e Soft Deadline?",
+    "options": [
+      "Hard Deadline roda em computadores caros; Soft Deadline roda em computadores baratos.",
+      "No Hard Deadline, o não cumprimento do prazo causa falha catastrófica total (ex: robô cirúrgico, airbag); no Soft Deadline, o atraso reduz a utilidade, mas não causa desastre (ex: streaming).",
+      "Hard Deadline não possui relógio de sistema.",
+      "Soft Deadline nunca pode sofrer trocas de contexto.",
+      "Hard Deadline é exclusivo de sistemas monoprogramáveis."
+    ],
+    "correct": 1,
+    "explanation": "Em RTOS, o foco é previsibilidade: Hard Deadline impõe tolerância zero a atrasos para evitar desastres humanos ou materiais."
+  },
+  {
+    "id": 5,
+    "aula": "Aula 02 / Acoplamento",
+    "question": "Um sistema com múltiplos processadores onde todas as CPUs compartilham a mesma memória física principal sob o controle de um único SO é chamado de:",
+    "options": [
+      "Sistema Fracamente Acoplado",
+      "Sistema Fortemente Acoplado (Multiprocessador / SMP)",
+      "Cluster Beowulf",
+      "Sistema de Arquivos em Nuvem",
+      "Hypervisor Tipo 2"
+    ],
+    "correct": 1,
+    "explanation": "Sistemas Fortemente Acoplados (SMP / Tightly Coupled) compartilham uma memória física única e barramento comum sob o mesmo kernel."
+  },
+  {
+    "id": 6,
+    "aula": "Aula 03 / Virtualização",
+    "question": "O Hypervisor do Tipo 1 (Bare-Metal) é caracterizado por:",
+    "options": [
+      "Executar como um aplicativo comum dentro do Windows ou macOS.",
+      "Executar diretamente sobre o hardware físico, sem necessidade de um sistema operacional hospedeiro prévio.",
+      "Emular o hardware inteiramente por software através de interpretadores lentos.",
+      "Necessitar de containers Docker para funcionar.",
+      "Ser exclusivo para computadores de 8 bits."
+    ],
+    "correct": 1,
+    "explanation": "Hypervisors Tipo 1 (como VMware ESXi, KVM e Hyper-V) rodam diretamente no hardware ('bare-metal'), oferecendo máxima performance e isolamento."
+  },
+  {
+    "id": 7,
+    "aula": "Aula 03 / Containers",
+    "question": "Qual a principal vantagem da virtualização baseada em Containers (ex: Docker) em relação às Máquinas Virtuais tradicionais?",
+    "options": [
+      "Containers carregam um kernel próprio completo para cada instância.",
+      "Containers compartilham o mesmo kernel do SO hospedeiro, sendo muito mais leves, consumindo menos memória e iniciando em milissegundos.",
+      "Containers rodam apenas em hardware do Tipo 1.",
+      "Containers eliminam a necessidade de memória RAM.",
+      "Containers não suportam redes TCP/IP."
+    ],
+    "correct": 1,
+    "explanation": "Containers virtualizam a nível de SO compartilhando o kernel do host através de namespaces e cgroups, evitando o peso de carregar SOs convidados completos."
+  },
+  {
+    "id": 8,
+    "aula": "Aula 04 / Processos",
+    "question": "No Bloco de Controle do Processo (PCB), qual informação indica o endereço da próxima instrução de máquina a ser executada pela CPU?",
+    "options": [
+      "Process ID (PID)",
+      "Contador de Programa (Program Counter - PC)",
+      "Ponteiro de Pilha (Stack Pointer)",
+      "Tabela de Páginas",
+      "Lista de Arquivos Abertos"
+    ],
+    "correct": 1,
+    "explanation": "O Contador de Programa (PC) é o registrador que armazena o endereço da próxima instrução a ser buscada e executada."
+  },
+  {
+    "id": 9,
+    "aula": "Aula 04 / Memória",
+    "question": "No espaço de endereçamento de um processo na memória, onde são alocadas as variáveis locais e os endereços de retorno de funções?",
+    "options": [
+      "No Heap (que cresce para cima)",
+      "Na Pilha / Stack (que cresce para baixo a partir dos endereços altos)",
+      "No segmento de Texto (Text)",
+      "No segmento de Dados (Data)",
+      "No disco rígido"
+    ],
+    "correct": 1,
+    "explanation": "A Pilha (Stack) armazena variáveis locais e registros de ativação de funções, crescendo em direção aos endereços baixos de memória."
+  },
+  {
+    "id": 10,
+    "aula": "Aula 04 / Estados do Processo",
+    "question": "Quando um processo que está no estado EXECUTANDO faz uma solicitação de leitura de arquivo em disco, para qual estado ele é transferido?",
+    "options": [
+      "Pronto (Ready)",
+      "Bloqueado / Espera (Waiting/Blocked)",
+      "Terminado (Terminated)",
+      "Novo (New)",
+      "Preemptado"
+    ],
+    "correct": 1,
+    "explanation": "Ao solicitar uma operação de E/S, o processo não pode continuar usando a CPU até que os dados cheguem, indo para o estado Bloqueado."
+  },
+  {
+    "id": 11,
+    "aula": "Aula 04 / Troca de Contexto",
+    "question": "Por que a Troca de Contexto (Context Switch) é classificada como 'puro overhead' do sistema operacional?",
+    "options": [
+      "Porque ela apaga o disco rígido.",
+      "Porque enquanto o SO salva o PCB do processo atual e restaura o PCB do próximo, a CPU não executa nenhuma instrução útil do programa do usuário.",
+      "Porque ela consome toda a memória swap.",
+      "Porque ela desliga os núcleos da CPU.",
+      "Porque ela só ocorre em sistemas monoprogramáveis."
+    ],
+    "correct": 1,
+    "explanation": "Durante a troca de contexto, a CPU gasta ciclos de clock executando rotinas internas do kernel para salvar e restaurar registradores, sem avançar o trabalho do usuário."
+  },
+  {
+    "id": 12,
+    "aula": "Aula 05 / Threads",
+    "question": "Em um processo multithread, o que cada thread possui de forma EXCLUSIVA (não compartilhado com as outras threads)?",
+    "options": [
+      "Espaço de endereçamento e código do programa",
+      "Variáveis globais e Heap",
+      "Pilha de Execução (Stack), Registradores e Contador de Programa (PC)",
+      "Arquivos e descritores de rede abertos",
+      "Tabela de páginas da memória"
+    ],
+    "correct": 2,
+    "explanation": "Cada thread possui seu próprio fluxo de execução, exigindo seu próprio conjunto de registradores, PC e pilha (Stack) para chamadas de função locais."
+  },
+  {
+    "id": 13,
+    "aula": "Aula 05 / Concorrência",
+    "question": "Uma 'Condição de Corrida' (Race Condition) ocorre quando:",
+    "options": [
+      "A CPU atinge 100% de uso por tempo prolongado.",
+      "Múltiplas threads acessam e alteram dados compartilhados simultaneamente sem sincronização, tornando o resultado imprevisível.",
+      "O escalonador entra em loop infinito.",
+      "Uma thread consome toda a memória RAM disponível.",
+      "Ocorre falta de página na memória virtual."
+    ],
+    "correct": 1,
+    "explanation": "A condição de corrida ocorre pela falta de sincronização em seções críticas quando várias threads manipulam a mesma memória compartilhada."
+  },
+  {
+    "id": 14,
+    "aula": "Aula 05 / Sincronização",
+    "question": "O mecanismo de sincronização que garante que apenas UMA thread por vez possa executar as instruções dentro de uma seção crítica é chamado de:",
+    "options": [
+      "Escalonador Round-Robin",
+      "Mutex (Exclusão Mútua)",
+      "Time-slice",
+      "Hypercall",
+      "Troca de Contexto"
+    ],
+    "correct": 1,
+    "explanation": "O Mutex (Mutual Exclusion) funciona como uma trava única: apenas a thread que adquire o lock pode entrar na seção crítica."
+  },
+  {
+    "id": 15,
+    "aula": "Aula 06 / Kernel e Modos",
+    "question": "Por que os processadores modernos operam com separação entre Modo Usuário (User Mode) e Modo Kernel (Supervisor)?",
+    "options": [
+      "Para aumentar a velocidade da placa de vídeo.",
+      "Para proteger o hardware e a memória do sistema, impedindo que programas de usuário executem instruções perigosas ou acessem dados de outros processos diretamente.",
+      "Para impedir que computadores usem internet.",
+      "Para desativar a multitarefa.",
+      "Para obrigar o uso de telas pretas no terminal."
+    ],
+    "correct": 1,
+    "explanation": "A separação de modos garante segurança e estabilidade: se um programa de usuário travar ou tentar invadir a memória do SO, ele é encerrado sem derrubar a máquina."
+  },
+  {
+    "id": 16,
+    "aula": "Aula 06 / System Calls",
+    "question": "Como um programa em espaço de usuário solicita serviços privilegiados ao Sistema Operacional (ex: ler arquivos, enviar dados pela rede)?",
+    "options": [
+      "Acessando os registradores da placa de rede diretamente.",
+      "Através de Chamadas de Sistema (System Calls / syscalls), que geram uma interrupção por software para mudar a CPU para o Modo Kernel.",
+      "Reiniciando o computador.",
+      "Usando comandos SQL no banco de dados.",
+      "Criando uma nova partição no disco."
+    ],
+    "correct": 1,
+    "explanation": "As System Calls são a porta de entrada controlada e segura para que aplicações peçam serviços ao Kernel do Sistema Operacional."
+  },
+  {
+    "id": 17,
+    "aula": "Aula 06 / Kernel",
+    "question": "Qual a diferença essencial entre um Kernel Monolítico (ex: Linux) e um Microkernel (ex: Minix, QNX)?",
+    "options": [
+      "No Kernel Monolítico, todos os serviços principais rodam no mesmo espaço privilegiado de kernel; no Microkernel, apenas o essencial roda no kernel e serviços como drivers e sistemas de arquivos rodam em espaço de usuário.",
+      "O Microkernel não suporta processos.",
+      "O Kernel Monolítico é exclusivo de computadores monoprogramáveis.",
+      "O Microkernel só roda em computadores de 8 bits.",
+      "Não existe diferença prática entre eles."
+    ],
+    "correct": 0,
+    "explanation": "O Kernel Monolítico foca em alto desempenho de execução direta, enquanto o Microkernel prioriza segurança e modularidade através de isolamento."
+  },
+  {
+    "id": 18,
+    "aula": "Aula 06 / Escalonamento",
+    "question": "No algoritmo de escalonamento FCFS (First-Come, First-Served), o que é o 'Efeito Comboio' (Convoy Effect)?",
+    "options": [
+      "Quando vários computadores em cluster perdem a conexão de rede.",
+      "Quando processos curtos passam muito tempo parados na fila esperando um processo longo de CPU (CPU-bound) terminar de executar.",
+      "Quando o time-slice é igual a zero.",
+      "Quando a memória virtual fica corrompida.",
+      "Quando duas threads entram em deadlock."
+    ],
+    "correct": 1,
+    "explanation": "O Efeito Comboio no FCFS atrasa todos os processos curtos e interativos porque eles ficam presos atrás de um único processo gigante de cálculo."
+  },
+  {
+    "id": 19,
+    "aula": "Aula 06 / Escalonamento",
+    "question": "Qual técnica é aplicada no escalonamento por Prioridade para resolver o problema de Inanição (Starvation) de processos de baixa prioridade?",
+    "options": [
+      "Exclusão Mútua",
+      "Envelhecimento (Aging), que aumenta progressivamente a prioridade dos processos que aguardam há muito tempo na fila de prontos.",
+      "Preempção de disco",
+      "Formatação rápida da memória RAM",
+      "Desativação do Kernel"
+    ],
+    "correct": 1,
+    "explanation": "O Envelhecimento (Aging) garante que qualquer processo, por menor que seja sua prioridade inicial, eventualmente se torne prioritário e consiga rodar."
+  },
+  {
+    "id": 20,
+    "aula": "Aula 06 / Escalonamento",
+    "question": "No algoritmo Round-Robin (Revezamento Circular), o que acontece se o valor do Quantum (fatia de tempo) for escolhido excessivamente pequeno?",
+    "options": [
+      "O sistema passa a se comportar como FCFS.",
+      "O alto overhead gerado pelas frequentes Trocas de Contexto (Context Switch) degrada o desempenho geral do sistema.",
+      "O algoritmo deixa de ser preemptivo.",
+      "Todas as threads são convertidas em processos batch.",
+      "A CPU para de processar instruções."
+    ],
+    "correct": 1,
+    "explanation": "Se a fatia de tempo for minúscula, a CPU gasta quase todo o seu tempo salvando e restaurando contextos de PCB em vez de processar o código dos programas."
+  }
+];
 
     const matchGamesData = {
       1: {
